@@ -9,35 +9,36 @@ app.use(express.json());
 
 app.get('/lists', (req, res) => {
     Promise.resolve()
-        .then(getList)
-        .then(value => res.send(value));
+        .then(() => getList())
+        .then(result => res.send(result));
 });
 
 app.get('/lists/:id', (req, res) => {
     Promise.resolve()
-        .then(getList.bind(this, req.params.id))
+        .then(() => getList(req.params.id))
         .then(result => res.send(result));
 });
 
 app.post('/lists', (req, res) => {
+    let id;
     Promise.resolve()
-        .then(getNewId)
-        .then(createItem.bind(this, req.body))
-        .then(getList)
+        .then(() => getNewId())
+        .then(result => { id = result; return createItem(req.body); })
+        .then(() => getList(id))
         .then(result => res.send(result));
 });
 
 app.put('/lists/:id', (req, res) => {
     Promise.resolve()
-        .then(updateItem.bind(this, req.body, req.params.id))
-        .then(getList)
-        .then(value => res.send(value));
+        .then(() => updateItem(req.params.id, req.body))
+        .then(() => getList(req.params.id))
+        .then(result => res.send(result));
 });
 
 app.delete('/lists/:id', (req, res) => {
     Promise.resolve()
-        .then(deleteItem)
-        .then(value => res.send(value));
+        .then(() => deleteItem(req.params.id))
+        .then(result => res.send(result));
 });
 
 const port = process.env.PORT || 3000;
@@ -60,19 +61,19 @@ function getNewId() {
     });
 }
 
-function createItem(itemData, id) {
+function createItem(itemData) {
     return new Promise(function (resolve, reject) {
         let stmt = db.prepare("INSERT INTO test VALUES (?)");
         stmt.run(itemData.name);
-        resolve(id);
+        resolve();
     });
 }
 
-function updateItem(itemData, id) {
+function updateItem(id, itemData) {
     return new Promise(function (resolve, reject) {
         let stmt = db.prepare("UPDATE test SET name = ? WHERE rowid = ?");
         stmt.run(itemData.name, id);
-        resolve(id);
+        resolve();
     });
 }
 
@@ -80,5 +81,6 @@ function deleteItem(id) {
     return new Promise(function (resolve, reject) {
         let stmt = db.prepare("DELETE FROM test WHERE rowid = ?");
         stmt.run(id);
+        resolve();
     });
 }
