@@ -7,38 +7,36 @@ const app = express();
 
 app.use(express.json());
 
-app.get('/lists', (req, res) => {
-    Promise.resolve()
-        .then(() => getList())
-        .then(result => res.send(result));
+app.get('/lists', async (req, res) => {
+    let result;
+    result = await getList();
+    res.send(result);
 });
 
-app.get('/lists/:id', (req, res) => {
-    Promise.resolve()
-        .then(() => getList(req.params.id))
-        .then(result => res.send(result));
+app.get('/lists/:id', async (req, res) => {
+    let result;
+    result = getList(req.params.id);
+    res.send(result);
 });
 
-app.post('/lists', (req, res) => {
-    let id;
-    Promise.resolve()
-        .then(() => getNewId())
-        .then(result => { id = result; return createItem(req.body); })
-        .then(() => getList(id))
-        .then(result => res.send(result));
+app.post('/lists', async (req, res) => {
+    let result, id;
+    id = await getNewId();
+    await createItem(req.body);
+    result = await getList(id);
+    res.send(result);
 });
 
-app.put('/lists/:id', (req, res) => {
-    Promise.resolve()
-        .then(() => updateItem(req.params.id, req.body))
-        .then(() => getList(req.params.id))
-        .then(result => res.send(result));
+app.put('/lists/:id', async (req, res) => {
+    let result;
+    await updateItem(req.params.id, req.body);
+    result = await getList(req.params.id);
+    res.send(result);
 });
 
-app.delete('/lists/:id', (req, res) => {
-    Promise.resolve()
-        .then(() => deleteItem(req.params.id))
-        .then(result => res.send(result));
+app.delete('/lists/:id', async (req, res) => {
+    await deleteItem(req.params.id);
+    res.send();
 });
 
 const port = process.env.PORT || 3000;
