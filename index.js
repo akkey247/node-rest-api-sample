@@ -6,6 +6,7 @@ const app = express();
 
 const Indexdb = require('./indexdb.js');
 const indexdb = new Indexdb(db);
+(async () => await indexdb.createTable())();
 
 app.use(express.json());
 
