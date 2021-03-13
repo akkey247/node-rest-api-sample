@@ -1,5 +1,5 @@
-var sqlite3 = require("sqlite3").verbose();
-var db = new sqlite3.Database(":memory:");
+const sqlite3 = require("sqlite3").verbose();
+const db = new sqlite3.Database(":memory:");
 
 const express = require('express');
 const app = express();
